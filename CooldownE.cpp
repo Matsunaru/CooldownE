@@ -27,7 +27,7 @@ HWND Ekran(int x, int y,HINSTANCE hInstance)
         L"STATIC", //class name
         NULL, //window name
         WS_POPUP,//style
-        x, y, 100, 100, // x,y Position, size
+        x, y, 104, 69, // x,y Position, size
         NULL, NULL, hInstance, NULL //Parent, Menu, Instance handle, Parameters
     );
 
@@ -57,13 +57,13 @@ void aktuwin(HWND hwnd,int i,string opn)
 
     // loading image
     Image image(w_opn.c_str());
-    graphics.DrawImage(&image, 0, 0, 102, 102); // Drawing a picture
+    graphics.DrawImage(&image, 0, 0, 105, 70); // Drawing a picture
 
     // Countdown display
     Font font(L"Arial", 24);
     SolidBrush brush(Color(255, 0, 0, 0));
     std::wstring currentTime = to_wstring(i);
-    graphics.DrawString(currentTime.c_str(), -1, &font, PointF(30, 70), &brush);
+    graphics.DrawString(currentTime.c_str(), -1, &font, PointF(30, 40), &brush);
 
     // clean
     ReleaseDC(hwnd, hdc);
