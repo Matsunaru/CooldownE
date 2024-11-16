@@ -83,10 +83,9 @@ void klawisz()//first Key graber
 
             for (int i = 60; i >= 0; i--)
             {
-                aktuwin(hwnd, i,"TITLE2O.png");
+                aktuwin(hwnd, i,"TITLE2.png");
                 Sleep(1000);
             }
-            aktuwin(hwnd, 0, "TITLE2.png");
         }
     }
 }
@@ -109,11 +108,10 @@ void klawisz2()//2nd key graber
 
                 for (int i = 25; i >= 0; i--)
                 {
-                    aktuwin(hwnd, i,"TITLE1O.png");
+                    aktuwin(hwnd, i,"TITLE1.png");
                     Sleep(1000);
                 }
                 insAndDownPressed = false;// returing ins&down on false
-                aktuwin(hwnd,0, "TITLE1.png");
             }
         }
     }
