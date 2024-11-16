@@ -11,8 +11,8 @@
 *.sln.docstates
 .gitignore
 .gitattributes
-.CooldownE.vcxproj
-.CooldownE.vcxproj.filters
+CooldownE.vcxproj
+CooldownE.vcxproj.filters
 /.conan
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
