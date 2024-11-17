@@ -22,7 +22,7 @@ void InitializeGDIPlus() {
 
 HWND Ekran(int x, int y,HINSTANCE hInstance)
 {
-    HWND hwnd = CreateWindowEx(
+    HWND hwnd = CreateWindowExW(
         WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT,//always on, Trasparation
         L"STATIC", //class name
         NULL, //window name
@@ -32,7 +32,7 @@ HWND Ekran(int x, int y,HINSTANCE hInstance)
     );
 
     if (!hwnd) {
-        MessageBox(NULL, L"can't open win", L"Error", MB_ICONERROR);
+        MessageBoxW(NULL, L"can't open win", L"Error", MB_ICONERROR);
         return NULL;
     }
 
