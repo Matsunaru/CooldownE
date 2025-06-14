@@ -1,134 +1,42 @@
-﻿#include <iostream>
-#include <windows.h>
-#include <thread>
+﻿#pragma comment(lib, "Gdiplus.lib")
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS")
+
+#include <Windows.h>
 #include <gdiplus.h>
-#include <string>
-#include <codecvt>
-#include <locale>
-#pragma comment (lib, "Gdiplus.lib")
+#include "GdiPlusManager.h"
+#include "OverlayWindow.h"
+#include "CountdownHandler.h"
 
-using namespace std;
-using namespace Gdiplus;
+// Entry point for Windows GUI applications
+int WINAPI wWinMain(
+    _In_ HINSTANCE hInst,          // Handle to the current instance
+    _In_opt_ HINSTANCE hPrevInst,  // Handle to the previous instance (unused)
+    _In_ PWSTR    lpCmdLine,       // Command line arguments as Unicode string
+    _In_ int      nShowCmd        // Controls how the window is to be shown
+) {
+    // Initialize GDI+ for graphics operations
+    GdiPlusManager gdiManager;
 
-bool insAndDownPressed = false;
+    // Create two overlay windows for countdown displays
+    OverlayWindow window1(700, 700, 104, 69, hInst);
+    OverlayWindow window2(900, 700, 104, 69, hInst);
 
+    // Set up countdown handlers:
+    // handler1: single-key mode, triggered by '6', counts down from 60 seconds
+    CountdownHandler handler1(0x36, -1, &window1, 60);
+    // handler2: combo mode, triggered by INSERT + DOWN, then 'C', counts from 25 seconds
+    CountdownHandler handler2(VK_INSERT, VK_DOWN, &window2, 25);
 
-void InitializeGDIPlus() {
-    GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-}
-//Initialization GDI
+    // Start the key listeners in background threads
+    handler1.start();
+    handler2.start();
 
-HWND Ekran(int x, int y,HINSTANCE hInstance)
-{
-    HWND hwnd = CreateWindowExW(
-        WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT,//always on, Trasparation
-        L"STATIC", //class name
-        NULL, //window name
-        WS_POPUP,//style
-        x, y, 104, 69, // x,y Position, size
-        NULL, NULL, hInstance, NULL //Parent, Menu, Instance handle, Parameters
-    );
-
-    if (!hwnd) {
-        MessageBoxW(NULL, L"can't open win", L"Error", MB_ICONERROR);
-        return NULL;
+    // Enter the message loop to keep the application running
+    MSG msg;
+    while (GetMessage(&msg, nullptr, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
 
-    SetLayeredWindowAttributes(hwnd, RGB(0,255,0), 255, LWA_COLORKEY);
-    ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
-
-    return hwnd;
-}
-
-void aktuwin(HWND hwnd,int i,string opn)
-{
-    if (!hwnd) return;
-
-    wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    wstring w_opn = converter.from_bytes(opn);
-
-    HDC hdc = GetDC(hwnd);
-    Graphics graphics(hdc);
-
-    //graphics.Clear(Color(255, 255, 255, 255));//clean win
-
-    // loading image
-    Image image(w_opn.c_str());
-    graphics.DrawImage(&image, 0, 0, 105, 70); // Drawing a picture
-
-    // Countdown display
-    Font font(L"Arial", 24);
-    SolidBrush brush(Color(255, 0, 0, 0));
-    std::wstring currentTime = to_wstring(i);
-    graphics.DrawString(currentTime.c_str(), -1, &font, PointF(30, 40), &brush);
-
-    // clean
-    ReleaseDC(hwnd, hdc);
-}
-
-
-void klawisz()//first Key graber
-{
-    HINSTANCE hInstance = GetModuleHandle(NULL);
-    InitializeGDIPlus();
-    HWND hwnd = Ekran(700, 700, hInstance);
-    aktuwin(hwnd, 0, "TLO.png");
-    while (true)
-    {
-        if (GetAsyncKeyState(0x36) & 0x8000)//grabing "6"
-        {
-
-            for (int i = 60; i >= 0; i--)
-            {
-                aktuwin(hwnd, i,"TITLE2.png");
-                Sleep(1000);
-            }
-        }
-    }
-}
-
-void klawisz2()//2nd key graber
-{
-    HINSTANCE hInstance = GetModuleHandle(NULL);
-    InitializeGDIPlus();
-    HWND hwnd = Ekran(900, 700, hInstance);
-    aktuwin(hwnd, 0, "TLO.png");
-    while (true)
-    {
-        if ((GetAsyncKeyState(0x2D) & 0x8000) && (GetAsyncKeyState(0x28) & 0x8000)) //checking if ins and arrow down is press if yes, then 'true'
-        {
-            insAndDownPressed = true;
-        }
-        {
-            if ((insAndDownPressed == true) && (GetAsyncKeyState(0x43) & 0x8000))//checking if down&ins is true, and if 'c' was press
-            {
-
-                for (int i = 25; i >= 0; i--)
-                {
-                    aktuwin(hwnd, i,"TITLE1.png");
-                    Sleep(1000);
-                }
-                insAndDownPressed = false;// returing ins&down on false
-            }
-        }
-    }
-}
-
-int main()
-{
-    thread t1(klawisz);//atach key graber on thread t1
-    thread t2(klawisz2);//atach 2nd key graber on thread t2
-
-    t1.detach();//detach t1 from main program
-    t2.detach();//detach t2 from main program
-
-    while (true)//it make program stay always on
-    {
-        Sleep(1000);
-    }
     return 0;
 }
-
