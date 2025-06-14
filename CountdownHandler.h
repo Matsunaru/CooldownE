@@ -1,6 +1,7 @@
 #pragma once
 #include "KeyListener.h"
 #include "OverlayWindow.h"
+#include <atomic>
 
 // Handles countdown logic triggered by key events
 // Inherits from KeyListener to run in a background thread
@@ -15,8 +16,18 @@ public:
 
     // Implements the listening loop that watches for key events and triggers the countdown
     void listen() override;
+    void start() {
+        running_ = true;
+        thread_ = std::thread(&CountdownHandler::listen, this);
+    }
+    void stop() {
+        running_ = false;
+        if (thread_.joinable()) thread_.join();
+    }
 
 private:
+    std::atomic<bool> running_{ false };
+    std::thread      thread_;
     int key1_;           // Virtual-key code for primary key
     int key2_;           // Virtual-key code for secondary key (or -1 if unused)
     OverlayWindow* window_; // Overlay window instance for drawing

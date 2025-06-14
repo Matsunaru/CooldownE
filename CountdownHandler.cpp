@@ -18,7 +18,7 @@ void CountdownHandler::listen() {
     // Initially render the background state (zero seconds)
     window_->update(0, "TLO.png");
 
-    while (true) {
+    while (running_) {
         if (key2_ < 0) {
             // Single-key mode: trigger countdown immediately on key1 press
             if (GetAsyncKeyState(key1_) & 0x8000) {

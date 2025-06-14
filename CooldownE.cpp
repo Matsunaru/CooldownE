@@ -33,10 +33,26 @@ int WINAPI wWinMain(
 
     // Enter the message loop to keep the application running
     MSG msg;
-    while (GetMessage(&msg, nullptr, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+    bool running = true;
+    while (running) {
+        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) {
+                running = false;
+                break;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        // if at least one window has been destroyed and the other one does not count the time – we end the program
+        if (!IsWindow(window1.getHwnd()) || !IsWindow(window2.getHwnd())) {
+            PostQuitMessage(0);
+        }
+
+        Sleep(10);
     }
+    handler1.stop();
+    handler2.stop();
 
     return 0;
 }

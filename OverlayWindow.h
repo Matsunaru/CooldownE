@@ -15,6 +15,8 @@ public:
     // Renders the specified image and draws the countdown value (secondsLeft) onto the window
     void update(int secondsLeft, const std::string& imagePath);
 
+    HWND getHwnd() const { return hwnd_; }
+
 private:
     HWND hwnd_;         // Handle to the Win32 window
     HINSTANCE hInst_;   // Application instance handle
